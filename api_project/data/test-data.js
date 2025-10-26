@@ -1,3 +1,8 @@
+const idNotExist = 999999;
+const firstname = "John";
+const lastname = "Doe";
+const checkin = "2024-01-01";
+const checkout = "2024-01-05";
 
 const sampleBooking = {
   firstname: 'John',
@@ -64,5 +69,10 @@ module.exports = {
   testCredentials,
   invalidBookingData,
   partialBookingUpdate,
-  dataGenerators
+  dataGenerators,
+  idNotExist,
+  firstname,
+  lastname,
+  checkin,
+  checkout
 };
