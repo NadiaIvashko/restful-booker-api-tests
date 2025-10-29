@@ -1,0 +1,39 @@
+{
+  "name": "restful-booker-api-tests",
+  "version": "1.0.0",
+  "description": "RESTful Booker API Test Suite",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:ci": "jest --ci --coverage --watchAll=false"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NadiaIvashko/restful-booker-api-tests.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NadiaIvashko/restful-booker-api-tests/issues"
+  },
+  "homepage": "https://github.com/NadiaIvashko/restful-booker-api-tests#readme",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3",
+    "axios": "^1.6.2",
+    "dotenv": "^16.3.1",
+    "eslint": "^8.55.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "jest-environment-node": "^29.7.0",
+    "faker": "^6.6.6"
+  },
+  "dependencies": {
+    "axios": "^1.6.2",
+    "dotenv": "^16.3.1"
+  }
+}
