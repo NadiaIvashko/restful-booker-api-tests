@@ -4,12 +4,14 @@ const testData = require('../data/test-data');
 describe('Booking CRUD Operations', () => {
   let apiClient;
   let authToken;
+  let createdBookingIds = [];
 
   beforeAll(() => {
     apiClient = new ApiClient();
   });
 
   beforeEach(async () => {
+    createdBookingIds = [];
     const authResponse = await apiClient.createToken(
       testData.testCredentials.username,
       testData.testCredentials.password
@@ -18,58 +20,64 @@ describe('Booking CRUD Operations', () => {
     apiClient.setToken(authToken);
   });
 
+  afterEach(async () => {
+    for (const bookingId of createdBookingIds) {
+      try {
+        await apiClient.deleteBooking(bookingId);
+      } catch (error) {
+        console.warn(`Failed to delete booking ${bookingId}:`, error.message);
+      }
+    }
+  });
+
+  async function createAndTrackBooking(bookingData, trackForCleanup = true) {
+    const response = await apiClient.createBooking(bookingData);
+    if (trackForCleanup && response.data?.bookingid) {
+      createdBookingIds.push(response.data.bookingid);
+    }
+    return response;
+  }
+
   test('should create a new booking', async () => {
-    const response = await apiClient.createBooking(testData.sampleBooking);
+    const response = await createAndTrackBooking(testData.sampleBooking);
 
     expect(response.status).toBe(200);
     expect(response.data).toHaveProperty('bookingid');
     expect(response.data).toHaveProperty('booking');
     expect(response.data.booking).toMatchObject(testData.sampleBooking);
-
-    await apiClient.deleteBooking(response.data.bookingid);
   });
 
   test('should get booking by ID', async () => {
-    const createResponse = await apiClient.createBooking(testData.sampleBooking);
+    const createResponse = await createAndTrackBooking(testData.sampleBooking);
     const bookingId = createResponse.data.bookingid;
-
     const response = await apiClient.getBooking(bookingId);
 
     expect(response.status).toBe(200);
     expect(response.data).toMatchObject(testData.sampleBooking);
-
-    await apiClient.deleteBooking(bookingId);
   });
 
   test('should update booking with PUT', async () => {
-    const createResponse = await apiClient.createBooking(testData.sampleBooking);
+    const createResponse = await createAndTrackBooking(testData.sampleBooking);
     const bookingId = createResponse.data.bookingid;
-
     const response = await apiClient.updateBooking(bookingId, testData.alternativeBooking);
 
     expect(response.status).toBe(200);
     expect(response.data).toMatchObject(testData.alternativeBooking);
-
-    await apiClient.deleteBooking(bookingId);
   });
 
   test('should partially update booking with PATCH', async () => {
-    const createResponse = await apiClient.createBooking(testData.sampleBooking);
+    const createResponse = await createAndTrackBooking(testData.sampleBooking);
     const bookingId = createResponse.data.bookingid;
-
     const response = await apiClient.partialUpdateBooking(bookingId, testData.partialBookingUpdate);
 
     expect(response.status).toBe(200);
     expect(response.data.firstname).toBe(testData.partialBookingUpdate.firstname);
     expect(response.data.additionalneeds).toBe(testData.partialBookingUpdate.additionalneeds);
-
-    await apiClient.deleteBooking(bookingId);
   });
 
   test('should delete booking', async () => {
-    const createResponse = await apiClient.createBooking(testData.sampleBooking);
+    const createResponse = await createAndTrackBooking(testData.sampleBooking, false);
     const bookingId = createResponse.data.bookingid;
-
     const response = await apiClient.deleteBooking(bookingId);
 
     expect(response.status).toBe(201);
@@ -78,4 +86,3 @@ describe('Booking CRUD Operations', () => {
     expect(deletedResponse.status).toBe(404);
   });
 });
-

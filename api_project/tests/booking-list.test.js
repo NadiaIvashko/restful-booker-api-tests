@@ -1,4 +1,5 @@
 const ApiClient = require('../helpers/api-client');
+const testData = require('../data/test-data');
 
 describe('Get All Bookings', () => {
   let apiClient;

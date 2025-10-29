@@ -1,5 +1,6 @@
 const ApiClient = require('../helpers/api-client');
 const testData = require('../data/test-data');
+const { isSuccessfulAuth, isFailedAuth } = require('../helpers/authCheck');
 
 describe('Authentication Tests', () => {
   let apiClient;
@@ -18,24 +19,21 @@ describe('Authentication Tests', () => {
       testData.testCredentials.password
     );
 
-    expect(response.status).toBe(200);
-    expect(response.data).toHaveProperty('token');
-    expect(typeof response.data.token).toBe('string');
-    expect(response.data.token.length).toBeGreaterThan(0);
+    expect(isSuccessfulAuth(response)).toBe(true);
+    expect(response.data.token).toBeDefined();
   });
 
   test('should fail authentication with invalid credentials', async () => {
     const response = await apiClient.createToken('invalid', 'invalid');
-    expect(response.status).toBe(200);
-    expect(response.data).toHaveProperty('reason');
+
+    expect(isFailedAuth(response)).toBe(true);
     expect(response.data.reason).toBe('Bad credentials');
   });
 
   test('should fail authentication with empty credentials', async () => {
     const response = await apiClient.createToken('', '');
-    expect(response.status).toBe(200);
-    expect(response.data).toHaveProperty('reason');
+
+    expect(isFailedAuth(response)).toBe(true);
     expect(response.data.reason).toBe('Bad credentials');
   });
 });
-
